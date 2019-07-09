@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="easyUI/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="easyUI/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="easyUI/css/demo.css">
+    <script src="js/jquery-1.8.3.js"></script>
+    <!--jquery.easyui.min.js包含了easyUI中的所有插件-->
+    <script src="js/jquery.easyui.min.js"></script>
+    <script type="application/javascript">
+        $(function () {  /*表示加载主页的之后  执行的方法*/
+
+            $("#dg").datagrid({
+                toolbar: "#ToolBar", /*显示工具栏*/
+                title: '区域信息',
+                url: 'getDistrict',
+                pagination: true,
+                pageList: [5, 9, 12, 15],//设置分页大小
+                pageSize: 3,//每页多少条
+                columns: [[
+                    {field: 'ck', checkbox: true, width: 100, align: 'left'},
+                    {field: 'id', title: '区域编号', width: 100,align: 'left'},
+                    {field: 'name', title: '区域名称', width: 100,align: 'left'},
+                    {field:  'delete',title: '删除', width: 100,
+                    formatter:function (value,row,index) {
+                        return '<a href="javascript:DeleteDistrict('+row.id+')">删除</a>';
+                    }}
+
+                ]]
+            });
+        });
+
+        function Add() {  /*打开对话框*/
+            $("#AddDialog").dialog("open").dialog("setTitle", ">>>>添加区域");
+        }
+
+        function CloseDialog() {  /*关闭对话框*/
+            $("#AddDialog").dialog("close");
+        }
+
+        function SaveDialog() {  /*实现添加业务 并提示*/
+            $("#AddDialogForm").form("submit", {
+                url: "addDistrict",
+                success: function (data) {
+                    data = $.parseJSON(data);
+                    if (data.result == 1) {
+                        $("#AddDialog").dialog("close");
+                        $.messager.alert("提示框", "添加成功", "info");
+                        $("#dg").datagrid("reload");
+                    } else {
+                        $.messager.alert("提示框", "添加失败", "info");
+                    }
+                }
+            });
+        }
+
+        function ModifyBySelect() {   /*真正提交修改前的准备工作*/
+            var SelectRows = $("#dg").datagrid('getSelections');//得到一行的数据 ，数个数组
+            if (SelectRows.length != 1) {
+                $.messager.alert('提示框', '你还没有选中行，或者选择了多行', 'info');
+                return;
+            }
+            //打开对话框
+            $("#upDialog").dialog("open").dialog("setTitle", ">>>>修改区域");
+
+            var row = SelectRows[0];//取出 数据中的对象
+            $.post("getSingleDistrict", {"id": row.id}, function (data) {
+                $("#upDialogForm").form("load", data);
+            }, "json");
+        }
+
+        function upSaveDialog() {
+            $("#upDialogForm").form("submit", {
+                url: "updateDistrict",
+                success: function (data) {
+                    data = $.parseJSON(data);
+                    if (data.result == 1) {
+                        //修改成功就关闭对话框  并刷新表格
+                        $("#upDialog").dialog("close");
+                        $("#dg").datagrid("reload");
+                    } else {
+                        $.messager.alert("提示框", "修改失败", "info");
+                    }
+                }
+            });
+        }
+        function DeleteDistrict(obj) {
+            $.messager.confirm('提示框','确定删除吗？',function (r) {
+                if (r){
+                    $.post("deleteSingleDistrict",{"id":obj},function (data) {
+                        if (data.result==1){
+                            $("#dg").datagrid("reload");
+                        }else {
+                            $.messager.alert('提示框','删除失败','info');
+                        }
+                    },"json");
+            }else {
+                    $.messager.alert('提示框','删除失败','info');
+                }
+
+        });
+        }
+
+        function DeleteBySelects() {
+            var selectRows = $("#dg").datagrid("getSelections");
+
+            //如果没有选中行的话，提示信息
+            if (selectRows.length < 1) {
+                $.messager.alert("提示消息", "请选择要删除的记录！", 'info');
+                return;
+            }
+            //如果选中行了，则要进行判断
+            $.messager.confirm("确认消息", "确定要删除所选记录吗？", function (isDelete) {
+
+                //如果为真的话
+                if (isDelete) {
+                    //定义变量值
+                    var strIds = "";
+                    //拼接字符串，这里也可以使用数组，作用一样
+                    for (var i = 0; i < selectRows.length; i++) {
+                        strIds += selectRows[i].id + ",";
+                    }
+                   // alert(strIds);
+                    //循环切割
+                    strIds = strIds.substr(0, strIds.length - 1);
+                    $.post('deleteDistricts',{"id":strIds}, function (jsonObj) {
+                        if (jsonObj.result>0) {
+                            $.messager.alert('提示', '删除成功！');
+                            $("#dg").datagrid("reload"); //删除成功后 刷新页面
+                        } else {
+
+                            $.messager.alert('提示信息', '删除失败，请联系管理员！', 'warning');
+                        }
+                    }, "JSON");
+                }
+            });
+
+        }
+
+    </script>
+</head>
+<body>
+<table id="dg"></table>
+<div id="ToolBar">  <!--定义工具栏  设置id-->
+    <div style="height: 40px;">
+        <a href="javascript:Add()" class="easyui-linkbutton"
+           iconCls="icon-add" plain="true">添加</a>
+        <a href="javascript:ModifyBySelect()" class="easyui-linkbutton"
+           iconCls="icon-edit" plain="true">修改</a>
+        <a href="javascript:DeleteBySelects()" class="easyui-linkbutton"
+           iconCls="icon-remove" plain="true">批量删除</a>
+    </div>
+</div>
+<!--添加 区域 对话框的具体内容-->
+<div id="AddDialog" class="easyui-dialog"
+     buttons="#AddDialogButtons" style="width: 280px;height: 280px;padding: 10px" closed="true">
+    <form id="AddDialogForm" method="post">
+        <table>
+            <tr>
+                <td>区域名称：</td>
+                <td><input type="text" class="easyui-validatebox" required name="name" id="bname"></td>
+            </tr>
+        </table>
+    </form>
+</div>
+<!--定义添加对话框中的按钮-->
+<div id="AddDialogButtons">
+    <a href="javascript:SaveDialog()" class="easyui-linkbutton"
+       iconCls="icon-ok">保存</a>
+    <a href="javascript:CloseDialog()"
+       class="easyui-linkbutton" iconCls="icon-cancel">取消</a>
+</div>
+<!--修改 区域 对话框的具体内容-->
+<div id="upDialog" class="easyui-dialog" buttons="#upDialogButtons"
+     style="width: 250px;height: 250px;padding: 10px" closed="true">
+    <form id="upDialogForm" method="post">
+        <table>
+            <tr>
+                <td>区域编号</td>
+                <td><input type="text" required name="id" readonly style="border: none" class="easyui-validatebox">
+                </td>
+            </tr>
+            <tr>
+                <td>区域名称</td>
+                <td><input type="text" required name="name" class="easyui-validatebox"></td>
+            </tr>
+        </table>
+    </form>
+</div>
+<!--定义修改对话框中的按钮-->
+<div id="upDialogButtons">
+    <a href="javascript:upSaveDialog()" class="easyui-linkbutton"
+       iconCls="icon-ok">更新</a>
+    <a href="javascript:CloseDialog()"
+       class="easyui-linkbutton" iconCls="icon-cancel">取消</a>
+</div>
+
+
+</body>
+</html>
