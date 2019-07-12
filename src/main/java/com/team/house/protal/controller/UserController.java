@@ -18,7 +18,7 @@ public class UserController {
 
     @RequestMapping("login")
     public String login(String veryCode, String name, String password, Model model, HttpSession session) {
-        String savecode = (String) session.getAttribute("savecode");
+        String savecode = (String) session.getAttribute("code");
         if (veryCode.equals(savecode)) {
             Users user = usersService.login(name, password);
             if (user != null) {
