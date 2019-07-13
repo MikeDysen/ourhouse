@@ -21,7 +21,7 @@ public class SmsController {
     @ResponseBody
     public String getCode(String sendPhone, HttpSession session){
         String code=(int)(Math.random()*100000)+"";
-        //String code="？";
+        //String code="";
         String sendMsg="验证码是："+code+",请在80秒内输入验证码!";
         int result=SmsUtil.sendMsg(sendPhone,sendMsg);
         //保存生成的验证码 以进行比对
