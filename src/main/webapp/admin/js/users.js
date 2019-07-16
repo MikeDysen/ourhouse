@@ -37,3 +37,26 @@ function search() {  //此为重点
     $("#dg").datagrid("load",{"name":s_name,"telephone":s_tel});
 
 }
+function Add() {  /*打开对话框*/
+    $("#AddDialog").dialog("open").dialog("setTitle", ">>>>添加区域");
+}
+
+function CloseDialog() {  /*关闭对话框*/
+    $("#AddDialog").dialog("close");
+}
+
+function SaveDialog() {  /*实现添加业务 并提示*/
+    $("#AddDialogForm").form("submit", {
+        url: "addDistrict",
+        success: function (data) {
+            data = $.parseJSON(data);
+            if (data.result == 1) {
+                $("#AddDialog").dialog("close");
+                $.messager.alert("提示框", "添加成功", "info");
+                $("#dg").datagrid("reload");
+            } else {
+                $.messager.alert("提示框", "添加失败", "info");
+            }
+        }
+    });
+}

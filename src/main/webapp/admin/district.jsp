@@ -31,14 +31,15 @@
         <table>
             <tr>
                 <td>区域名称：</td>
-                <td><input type="text" class="easyui-validatebox" required name="name" id="bname"></td>
+                <td><input type="text" class="easyui-validatebox" required name="name" id="name"></td>
             </tr>
         </table>
+        <a href="javascript:SaveDialog()" class="easyui-linkbutton"
+           iconCls="icon-ok">保存</a>
+        <a href="javascript:CloseDialog()"
+           class="easyui-linkbutton" iconCls="icon-cancel">取消</a>
     </form>
-    <a href="javascript:SaveDialog()" class="easyui-linkbutton"
-       iconCls="icon-ok">保存</a>
-    <a href="javascript:CloseDialog()"
-       class="easyui-linkbutton" iconCls="icon-cancel">取消</a>
+
 </div>
 <!--定义添加对话框中的按钮-->
 <div id="AddDialogButtons">
@@ -58,13 +59,14 @@
                 <td>区域名称</td>
                 <td><input type="text" required name="name" class="easyui-validatebox"></td>
             </tr>
+            <a href="javascript:upSaveDialog()" class="easyui-linkbutton"
+               iconCls="icon-ok">更新</a>
+            <a href="javascript:CloseDialog()"
+               class="easyui-linkbutton" iconCls="icon-cancel">取消</a>
         </table>
     </form>
 
-    <a href="javascript:upSaveDialog()" class="easyui-linkbutton"
-       iconCls="icon-ok">更新</a>
-    <a href="javascript:CloseDialog()"
-       class="easyui-linkbutton" iconCls="icon-cancel">取消</a>
+
 </div>
 <!--定义修改区域对话框中的按钮-->
 <div id="upDialogButtons">

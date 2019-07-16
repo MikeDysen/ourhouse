@@ -18,6 +18,7 @@ public class DistrictController {
     @RequestMapping("getDistrict")
     @ResponseBody
     public List<District> getDistrict(){
+        System.out.println("ss");
         return districtService.getDistrictList();
     }
 }

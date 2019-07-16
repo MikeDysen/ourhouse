@@ -33,6 +33,22 @@
         <a href="javascript:search()" class="easyui-linkbutton" iconCls="search" plain="true">搜索</a>
     </div>
 </div>
+<div id="AddDialog" class="easyui-dialog"
+     buttons="#AddDialogButtons" style="width: 280px;height: 280px;padding: 10px" closed="true">
+    <form id="AddDialogForm" method="post">
+        <table>
+            <tr>
+                <td>区域名称：</td>
+                <td><input type="text" class="easyui-validatebox" required name="name" id="bname"></td>
+            </tr>
+        </table>
+    </form>
+    <a href="javascript:SaveDialog()" class="easyui-linkbutton"
+       iconCls="icon-ok">保存</a>
+    <a href="javascript:CloseDialog()"
+       class="easyui-linkbutton" iconCls="icon-cancel">取消</a>
+</div>
+<div id="AddDialogButtons">
 <%--<div id="AddDialog" class="easyui-dialog" buttons="#AddDialogButtons" style="width: 280px;"></div>--%>
 </body>
 </html>

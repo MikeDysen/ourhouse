@@ -29,6 +29,8 @@ public interface HouseMapper {
     int updateByPrimaryKeySelective(House record);
 
     int updateByPrimaryKey(House record);
+
+
     List<House> getHouseByUserId(Integer uid);
     House getHouseById(String id);
     List<House> getHouseByIsPass(Integer ispass);
